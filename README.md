@@ -69,6 +69,12 @@ os.environ["KERAS_BACKEND"] = "torch"
 └── .github/workflows/  # CI: lint + tests + a sanity reproduce run
 ```
 
+## Project 5 (bonus): SVMs for intrusion detection
+
+Start P5 from its own template instead: https://github.com/byuan/csec-520-620-p5-template
+It includes the data loader, metrics, figures and the P5 grading checks. (This template's
+`grading/grade.py` can also check a P5 repo: set `project: p5` in `config.yaml`.)
+
 ## Grading (by an AI agent or a human)
 
 This repo is designed to be graded by an agent. See `grading/`:
@@ -100,10 +106,8 @@ looks clean.
 
 ## Team
 
-- Manon Guastalli	- mtg5070 — Reporting
-- Oscar Dorantes	- osd3870 — Evaluation
-- Shefali Maurya	- sm9991 — Data Engineering
-- Srujan Vandavasi	- sv9211 — Modeling
+- Name (RIT ID) — contributions
+- Name (RIT ID) — contributions
 
 ## Academic integrity & AI use
 

@@ -1,23 +1,57 @@
-# Experiment configuration — edit this, not the code, to change a run.
 seed: 42
 
 data:
-  source: synthetic        # "synthetic" (default) or "csv"
-  csv_path: data/dataset.csv
-  target: label            # target column name when source == csv
-  n_samples: 2000          # synthetic only
-  n_features: 20           # synthetic only
-  test_size: 0.2
+  source: csv
+  csv_path: data/credit_card_fraud_10k.csv
+  target: is_fraud
+  train_ratio: 0.70         # 70% Train / 15% Val / 15% Test (chronological)
+  val_ratio: 0.15
 
 model:
-  hidden_sizes: [64, 32]
-  dropout: 0.1
+  # Baseline 1: Rule-Based Thresholds
+  rule_thresholds:
+    amount: 500.0
+    velocity_last_24h: 4
+    device_trust_score: 30
 
-train:
-  epochs: 30
-  batch_size: 64
-  lr: 0.001
-  weight_decay: 0.0001
+  # Baseline 2: Logistic Regression
+  logreg_c: 1.0
+  logreg_max_iter: 1000
+
+  # Primary Model: Scikit-Learn GBDT (HistGradientBoosting)
+  gbdt_max_iter: 200
+  gbdt_learning_rate: 0.05
+  gbdt_max_depth: 6
+
+eval:
+  workload_rate: 0.05       # Primary metric: Recall @ 5% analyst workload
+
+# All models and controlled experiments executed automatically by train.py
+experiments:
+  - name: baseline1_rule_all
+    type: rule
+    feature_set: all
+    use_class_weights: false
+
+  - name: baseline2_logreg_all_weighted
+    type: logreg
+    feature_set: all
+    use_class_weights: true
+
+  - name: primary_gbdt_static_weighted
+    type: gbdt
+    feature_set: static
+    use_class_weights: true
+
+  - name: primary_gbdt_all_unweighted
+    type: gbdt
+    feature_set: all
+    use_class_weights: false
+
+  - name: primary_gbdt_all_weighted
+    type: gbdt
+    feature_set: all
+    use_class_weights: true
 
 output:
   dir: results

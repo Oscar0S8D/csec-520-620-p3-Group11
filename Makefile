@@ -3,7 +3,12 @@
 .PHONY: help setup reproduce test lint clean
 
 VENV := .venv
-PY := $(VENV)/bin/python
+ifeq ($(OS),Windows_NT)
+    PY := .venv/Scripts/python.exe
+else
+    PY := .venv/bin/python
+endif
+	
 
 help:
 	@echo "make setup      - create .venv and install requirements"
@@ -28,4 +33,4 @@ lint:
 	$(PY) -m py_compile src/*.py tests/*.py
 
 clean:
-	rm -f results/*.png results/*.json results/*.pt
+	rm -f results/*.png results/*.json results/*.pt results/*
