@@ -1,0 +1,70 @@
+# Machine-readable rubric for Project 5 (bonus): SVMs for intrusion detection.
+# Weights sum to 100. The score converts to up to +3 percentage points on the final
+# course grade (score / 100 x 3). `check` = auto (verified by grade.py), agent (LLM
+# judgment), or both (auto evidence + agent judgment).
+version: 1
+project: p5
+total_points: 100
+
+criteria:
+  - id: reproducibility
+    title: Reproducibility (make reproduce works)
+    max_points: 15
+    check: both
+    guidance: >
+      `make reproduce` runs from a clean clone (after the student-documented data
+      download) and regenerates results/metrics.json and every figure. The training
+      subsample is seeded. Auto checks: reproduce_runs, p5_metrics_fresh, p5_figures.
+      A run that times out (45 minutes) or needs manual steps loses most of these points.
+
+  - id: preprocessing
+    title: Preprocessing & pipeline (no leakage)
+    max_points: 10
+    check: both
+    guidance: >
+      Uses the official training and testing CSVs; drops id; predicts `label`.
+      One-hot encodes proto, service and state (rare categories grouped), and
+      standardizes, with the encoder and scaler inside an sklearn Pipeline fit on
+      training data only. The testing set is used only for final evaluation, never for
+      tuning. Auto checks: p5_data, leakage_scan. Read the code to confirm.
+
+  - id: linear_svm
+    title: "Task 1: linear SVM"
+    max_points: 15
+    check: both
+    guidance: >
+      All five values of C with training and test precision, recall, F1 and FPR; an F1
+      vs. C plot; the ten largest-|w| features with a sensible interpretation in the
+      report. Auto check: p5_linear.
+
+  - id: rbf_svm
+    title: "Task 2: RBF SVM & tuning"
+    max_points: 25
+    check: both
+    guidance: >
+      Full 4 x 4 grid of C and gamma with 5-fold stratified CV on the 20,000-row
+      subsample, scored by F1; a heatmap; the report identifies underfit and overfit
+      settings using the train/CV gap (see largest_train_cv_gaps in p5_rbf); the best
+      setting refit and evaluated on the testing set with the number of support vectors;
+      training time compared with Task 1. Auto check: p5_rbf.
+
+  - id: one_class_svm
+    title: "Task 3: one-class SVM"
+    max_points: 20
+    check: both
+    guidance: >
+      Trained on normal rows of the subsample only (confirm in the code: no attack rows
+      in fit). Three values of nu with detection rate and FPR on the testing set, and a
+      per-category detection table covering all nine attack categories. The report names
+      the categories it misses and gives a plausible reason. Auto check: p5_one_class.
+
+  - id: analysis
+    title: "Task 4: analysis & recommendation"
+    max_points: 15
+    check: agent
+    guidance: >
+      One comparison table of the three models. A deployment recommendation for an
+      operator who can review 200 alerts a day, argued from FPR and the test-set base
+      rate (expected alerts per day), not accuracy alone. An evasion discussion that uses
+      the linear model's weights and separates features an attacker can change cheaply
+      from ones they cannot. Report numbers must match results/metrics.json.
