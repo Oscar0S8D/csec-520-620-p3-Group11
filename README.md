@@ -1,4 +1,4 @@
-# CSEC 520/620 — Project Template
+# CSEC 520/620 — Project 3 - Credit Card Fraud Detection
 
 Starter repository for CSEC 520/620 (Cyber Analytics & Machine Learning) projects.
 It enforces the course **reproducibility standard**:
